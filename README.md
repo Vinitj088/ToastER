@@ -1,10 +1,6 @@
-#Project Name: Next.js Vercel AI Edge Functions
-##Description
-This project is a powerful combination of Next.js, Vercel, and AI-powered edge functions. It leverages the capabilities of Next.js for building fast and responsive web applications, while also tapping into the power of Vercel's serverless architecture and AI edge functions to enhance the performance and user experience.
+Project Name: Next.js Vercel AI Edge Functions
 
-##Features
-> Next.js: A React framework for building production-ready web applications with server-side rendering, routing, and more.
-> Vercel: A cloud platform for serverless deployment, enabling easy hosting and scaling of web applications.
-> AI Edge Functions: Integration of AI edge functions to enhance your application's performance and capabilities.
-> Serverless Architecture: Optimal utilization of serverless computing for scalability and cost-effectiveness.
-> Fast and Responsive: Create blazing-fast web applications with a great user experience.
+
+Description
+
+This project is a powerful combination of Next.js, Vercel, and AI-powered edge functions. It leverages the capabilities of Next.js for building fast and responsive web applications, while also tapping into the power of Vercel's serverless architecture and AI edge functions to enhance the performance and user experience.
