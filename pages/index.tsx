@@ -9,23 +9,38 @@ const Home: NextPage = () => {
         <title>The Best Slang Thesaurus</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
+      <div className="area">
+          <ul className="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+      </div>
       <main className="flex flex-1 flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
-        <h1 className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900">
-          The Best Ever Slang Thesaurus
+        
+        <h1 className="animate-typing overflow-hidden whitespace-nowrap sm:text-6xl text-4xl max-w-[708px] font-bold text-white">
+          Ever thought of Gen Z tones?
         </h1>
-        <p className="text-slate-500 mt-5 text-xl">
-          The best ever slang thesaurus is coming soon, but for now enjoy this slang translator.
+        <p className="text-white mt-5 text-xl">
+          
+          This is the best ever Gen Z slang translator.
         </p>
-        <p className="text-slate-500 mt-5 text-xl">
-          Warning: It will get you cancelled, fired, and likely tarred and feathered.
+        <p className="text-white mt-5 text-xl">
+          Warning: Don't forget to Enjoy!!!! 🫡
         </p>
         <div className="mt-10">
-          <Link href="/translator">
-            Try the Slang Translator &rarr;
-            {/* <a className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80">
+          <Link className="text-white" href="/translator">
+            Wanna Try the Translator Now? &rarr;
+            { <a className="bg-white rounded-xl text-black font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 hover:text-cyan-600">
               // Try the Slang Translator &rarr;
-            </a> */}
+            </a> }
           </Link>
         </div>
       </main>

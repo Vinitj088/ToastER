@@ -27,7 +27,6 @@ const Translator: NextPage = () => {
 
   const prompt = `
 ${text}${text.slice(-1) === "." ? "" : "."}
-
 Translates the above text into exaggerated internet slang in the style of urban dictionary. Absolutely NO HASHTAGS ALLOWED.
 
 Slang level = "${slangLevel}"
@@ -79,8 +78,9 @@ Your translation without hashtags:`;
       // background: linear-gradient(90deg, #00c9ff, #92fe9d);
       // background: "linear-gradient(90deg, #00c9ff, #92fe9d)",
       // retro yellow gradient
+      background: "#171717"
       // background: "linear-gradient(90deg, #f6d365, #fda085)",
-      background: "linear-gradient(to right, #d3cce3, #e9e4f0)",
+      // background: "linear-gradient(to right, #d3cce3, #e9e4f0)",
     }}>
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Head>
@@ -90,21 +90,21 @@ Your translation without hashtags:`;
 
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 mt-12 sm:mt-20">
-        {/* <a
+        {<a
           className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 shadow-md transition-colors hover:bg-gray-100 mb-5"
-          href="https://github.com/Nutlope/twitterbio"
+          href="https://github.com/"
           target="_blank"
           rel="noopener noreferrer"
         >
           <Github />
           <p>Star on GitHub</p>
-        </a> */}
+        </a> }
         {/* make the slang word blue and text word gray */}
-        <h1 className="sm:text-6xl text-4xl max-w-[708px] font-bold text-slate-900">
+        <h1 className="sm:text-6xl text-4xl max-w-[708px] font-bold text-white">
           Translate your 
-          <span className="text-gray-500"> text</span> into
+          <span className="text-rose-400"> text</span> into
           internet
-          <span className="text-blue-500"> slang</span>.
+          <span className="text-cyan-500"> slang</span>.
         </h1>
         {/* <p className="text-slate-500 mt-5">
           47,118 translations generated so far.
@@ -118,10 +118,10 @@ Your translation without hashtags:`;
               alt="1 icon"
               className="mb-5 sm:mb-0"
             />
-            <p className="text-left font-medium">
+            <p className="text-white text-left font-medium">
               Enter your text{" "}
-              <span className="text-slate-500">
-                (or write a few sentences you want to translate)
+              <span className="text-white">
+                (or write a something you want to translate)
               </span>
               .
             </p>
@@ -130,31 +130,31 @@ Your translation without hashtags:`;
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={4}
-            className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5"
+            className="w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black my-5 bg-gray-300"
             placeholder={
-              "e.g. This is some regular boring text."
+              "e.g. Hello ji, Kaise ho?."
             }
           />
-          <div className="flex mb-5 items-center space-x-3">
+          <div className="flex mb-5 items-center space-x-3 ">
             <Image src="/2-black.png" width={30} height={30} alt="2 icon" />
-            <p className="text-left font-medium">Select your slang level.</p>
+            <p className="text-left text-white font-medium">Select your slang language level.</p>
           </div>
-          <div className="block">
+          <div className="block bg-gray-300">
             <DropDown
               vibe={slangLevel}
               setVibe={(newSlangLevel) =>
                 setSlangLevel((newSlangLevel as string))
               }
-              options={["1/5 just toeing the line", "2/5 edgy", "3/5 dank", "4/5 cancelled", "5/5 dead"]}
+              options={["1/5 just touching the line", "2/5 edgy", "3/5 mild", "4/5 strong", "5/5 Very strong Language"]}
               label="Slang Level"
             />
           </div>
           {!loading && (
             <button
-              className="bg-black rounded-xl text-white font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full"
+              className="bg-white rounded-xl text-black font-medium px-4 py-2 sm:mt-10 mt-8 hover:bg-black/80 w-full hover:text-white bg-lime-300"
               onClick={(e) => generateTranslation(e)}
             >
-              Translate to Slang &rarr;
+              Change me to Gen Z? &rarr;
             </button>
           )}
           {loading && (
@@ -177,15 +177,15 @@ Your translation without hashtags:`;
             <>
               <div>
                 <h2
-                  className="sm:text-4xl text-3xl font-bold text-slate-900 mx-auto"
+                  className="sm:text-4xl text-3xl font-bold text-white mx-auto"
                   ref={textRef}
                 >
-                  Your translated text
+                  Here's your Gen Z Slang text
                 </h2>
               </div>
               <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                 <div
-                  className="bg-white rounded-xl shadow-md p-4 hover:bg-gray-100 transition cursor-copy border"
+                  className="bg-violet-300 rounded-xl shadow-md p-4 hover:bg-violet-100 transition cursor-copy border"
                   onClick={() => {
                     navigator.clipboard.writeText(
                       generatedTranslation.toString()
@@ -195,15 +195,14 @@ Your translation without hashtags:`;
                     });
                   }}
                 >
-                  <p>{generatedTranslation}</p>
+                  <p className="text-black font-semibold ">{generatedTranslation}</p>
                 </div>
               </div>
             </>
           )}
         </div>
       </main>
-      <FuturePedia />
-      <FAQ />
+      
       <Footer />
     </div>
     </div>
