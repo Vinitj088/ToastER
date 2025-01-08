@@ -137,5 +137,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## 📫 Contact
 
 Email - vinitjain088@gmail.com
-
-Project Link: [https://github.com/yourusername/Translatr](https://github.com/yourusername/Translatr)
