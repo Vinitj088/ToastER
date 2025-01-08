@@ -5,7 +5,13 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, Languages, SlidersHorizontal, X, Copy, Check } from 'lucide-react';
 
-const slangLevels = [
+interface SlangLevel {
+  id: string;
+  label: string;
+  prompt: string;
+}
+
+const slangLevels: SlangLevel[] = [
   { id: 'mild', label: 'Mild Slang', prompt: 'Convert to mild internet slang' },
   { id: 'medium', label: 'Medium Slang', prompt: 'Use moderate internet slang and abbreviations' },
   { id: 'heavy', label: 'Heavy Slang', prompt: 'Use heavy internet slang and abbreviations' },
@@ -13,28 +19,38 @@ const slangLevels = [
   { id: 'crazy', label: 'Crazy Slang', prompt: 'Go absolutely wild with internet slang and emoji' }
 ];
 
-const TextAnimator = () => {
-  const [inputText, setInputText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [selectedLevel, setSelectedLevel] = useState('medium');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [isClient, setIsClient] = useState(false);
-  const [error, setError] = useState('');
-  const abortControllerRef = useRef(null);
-  const textRef = useRef(null);
+const TextAnimator: React.FC = () => {
+  const [inputText, setInputText] = useState<string>('');
+  const [translatedText, setTranslatedText] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedLevel, setSelectedLevel] = useState<string>('medium');
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
+  const [isClient, setIsClient] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsClient(true);
     gsap.registerPlugin(ScrollTrigger);
+
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, []);
 
   const animateText = () => {
     if (!isClient || !textRef.current || !translatedText) return;
 
+    const elements = Array.from(textRef.current.children);
+    if (elements.length === 0) return;
+
     gsap.fromTo(
-      textRef.current.children,
+      elements,
       {
         y: 50,
         opacity: 0
@@ -65,12 +81,10 @@ const TextAnimator = () => {
   const handleTranslate = async (forceTranslate = false) => {
     if (!inputText.trim() || (loading && !forceTranslate)) return;
 
-    // Cancel any ongoing translation
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
 
-    // Create new abort controller
     abortControllerRef.current = new AbortController();
 
     setLoading(true);
@@ -78,18 +92,20 @@ const TextAnimator = () => {
 
     try {
       const selectedLevelConfig = slangLevels.find(level => level.id === selectedLevel);
+      if (!selectedLevelConfig) throw new Error('Invalid slang level');
+
       const response = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           text: inputText,
-          level: selectedLevelConfig?.prompt
+          level: selectedLevelConfig.prompt
         }),
         signal: abortControllerRef.current.signal
       });
 
       if (!response.ok) {
-        throw new Error('Translation failed');
+        throw new Error(`Translation failed: ${response.status}`);
       }
 
       const data = await response.json();
@@ -101,15 +117,17 @@ const TextAnimator = () => {
       setTranslatedText(data.translatedText);
       setIsFilterOpen(false);
 
+      // Delay animation to ensure DOM update
       if (isClient) {
-        setTimeout(animateText, 100);
+        requestAnimationFrame(() => {
+          setTimeout(animateText, 100);
+        });
       }
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        return; // Ignore abort errors
-      }
+    } catch (error: any) {
+      if (error.name === 'AbortError') return;
+
       console.error('Translation error:', error);
-      setError('Translation failed. Please try again.');
+      setError(error.message || 'Translation failed. Please try again.');
       setTranslatedText('');
     } finally {
       setLoading(false);
@@ -117,23 +135,20 @@ const TextAnimator = () => {
     }
   };
 
-  // Handle level selection separately from translation
-  const handleLevelSelect = (levelId) => {
+  const handleLevelSelect = (levelId: string) => {
     setSelectedLevel(levelId);
     if (inputText.trim()) {
-      handleTranslate(true); // Force new translation
+      handleTranslate(true);
     }
   };
 
-  // Helper function to safely split and map text
-  const renderTranslatedText = (text) => {
+  const renderTranslatedText = (text: string | null) => {
     if (!text) return null;
     return text.split('\n').map((line, i) => (
       <div key={i} className="text-2xl md:text-4xl leading-relaxed mb-2">{line}</div>
     ));
   };
 
-  // Rest of the JSX remains the same, just update the onClick handlers for level selection
   return (
     <div className="flex min-h-screen bg-[#7542ff]">
       {/* Desktop Sidebar */}
@@ -159,7 +174,7 @@ const TextAnimator = () => {
           <button
             onClick={() => handleTranslate(true)}
             disabled={loading || !inputText.trim()}
-            className="w-full bg-[#333] hover:bg-[#676774] text-white p-3 rounded-md flex items-center justify-center disabled:opacity-50"
+            className="w-full bg-[#333] hover:bg-[#676774] text-white p-3 rounded-md flex items-center justify-center disabled:opacity-50 transition-colors"
           >
             {loading ? 'Translating...' : 'Translate'}
           </button>
@@ -177,6 +192,7 @@ const TextAnimator = () => {
           <button
             onClick={() => setIsFilterOpen(!isFilterOpen)}
             className="text-gray-400"
+            aria-label={isFilterOpen ? "Close menu" : "Open menu"}
           >
             {isFilterOpen ? (
               <X className="w-5 h-5" />
@@ -203,7 +219,7 @@ const TextAnimator = () => {
             <button
               onClick={() => handleTranslate(true)}
               disabled={loading || !inputText.trim()}
-              className="w-full bg-[#333] hover:bg-[#676774] text-white py-2 rounded-md flex items-center justify-center text-sm disabled:opacity-50"
+              className="w-full bg-[#333] hover:bg-[#676774] text-white py-2 rounded-md flex items-center justify-center text-sm disabled:opacity-50 transition-colors"
             >
               {loading ? 'Translating...' : 'Translate'}
             </button>
@@ -219,10 +235,10 @@ const TextAnimator = () => {
                 <button
                   key={level.id}
                   onClick={() => handleLevelSelect(level.id)}
-                  className={`px-3 py-1 rounded-full text-xs whitespace-nowrap ${
+                  className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-colors ${
                     selectedLevel === level.id
                       ? 'bg-[#161618] text-white'
-                      : 'bg-[#eae6f2] text-[#676774]'
+                      : 'bg-[#eae6f2] text-[#676774] hover:bg-[#333] hover:text-white'
                   }`}
                 >
                   {level.label}
@@ -248,7 +264,7 @@ const TextAnimator = () => {
               {translatedText && (
                 <button
                   onClick={animateText}
-                  className="flex items-center text-gray-400 text-xs"
+                  className="flex items-center text-gray-400 text-xs hover:text-black transition-colors"
                 >
                   play again
                   <ArrowRight className="ml-1 w-3 h-3" />
@@ -258,7 +274,7 @@ const TextAnimator = () => {
               {translatedText && (
                 <button
                   onClick={handleCopy}
-                  className="flex items-center bg-[#161618] text-white px-3 py-1.5 rounded-full text-xs"
+                  className="flex items-center bg-[#161618] text-white px-3 py-1.5 rounded-full text-xs hover:bg-[#333] transition-colors"
                 >
                   {copied ? (
                     <>
@@ -288,7 +304,7 @@ const TextAnimator = () => {
               className={`px-4 py-2 rounded-full transition-colors ${
                 selectedLevel === level.id
                   ? 'bg-[#161618] text-white'
-                  : 'bg-[#eae6f2] text-[#676774] hover:bg-[#333] hover:text-[#fff]'
+                  : 'bg-[#eae6f2] text-[#676774] hover:bg-[#333] hover:text-white'
               }`}
             >
               {level.label}
@@ -311,7 +327,7 @@ const TextAnimator = () => {
             {translatedText && (
               <button
                 onClick={animateText}
-                className="flex items-center text-gray-400 hover:text-black"
+                className="flex items-center text-gray-400 hover:text-black transition-colors"
               >
                 play again
                 <ArrowRight className="ml-2 w-4 h-4" />
